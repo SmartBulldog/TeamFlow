@@ -5,14 +5,36 @@ import { z } from 'zod'
 
 const registerSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
-  name: z.string().min(2).optional(),
+  password: z.string().min(8, 'Password must be at least 8 characters').refine((password) => {
+    // Check for at least one uppercase letter
+    if (!/[A-Z]/.test(password)) return false
+    // Check for at least one lowercase letter
+    if (!/[a-z]/.test(password)) return false
+    // Check for at least one number
+    if (!/[0-9]/.test(password)) return false
+    // Check for at least one special character
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return false
+    return true
+  }, 'Password must contain uppercase, lowercase, number, and special character'),  name: z.string().min(2).optional(),
 })
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { email, password, name } = registerSchema.parse(body)
+    
+    // Additional password security checks
+    const commonWeakPasswords = [
+      'password', 'password123', '12345678', 'qwerty123', 'admin123',
+      'welcome123', 'letmein123', 'password1', 'abc12345', '123456789'
+    ]
+    
+    if (commonWeakPasswords.includes(password.toLowerCase())) {
+      return NextResponse.json(
+        { error: 'This password is too common. Please choose a stronger password' },
+        { status: 400 }
+      )
+    }
 
     // Check if user already exists
     const existingUser = await db.user.findUnique({
