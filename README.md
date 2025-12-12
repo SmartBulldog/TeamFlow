@@ -99,9 +99,17 @@ This foundation can be extended to build real-world products like task managers,
 
 ## 📫 Contact
 
-Built by Valery Karlov  
-GitHub: [@SmartBulldog](https://github.com/SmartBulldog)
+**Created by:** [Valerii Karpov](https://github.com/SmartBulldog)
+**Company:** VKV - New vision
+**Website:** [teamflow.vkvstudio.pro](https://teamflow.vkvstudio.pro)
+**Email:** smartbulldog.pro@gmail.com
 
+
+## 📜 License
+
+MIT License - feel free to use this project for learning and portfolio purposes.
+
+**Note:** This is a portfolio project created by Valerii Karpov to demonstrate full-stack development skills, GDPR compliance, and modern web security practices.
 ---
 
 **License**: MIT
