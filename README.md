@@ -69,3 +69,39 @@ Here are a few ideas you can implement on top of TeamFlow:
 
 TeamFlow is not a finished product.  
 It is a foundation you own and extend to match your specific business needs.
+
+## 🏗️ Architecture & Best Practices
+
+This project demonstrates modern full-stack development patterns:
+
+- **Type Safety**: End-to-end TypeScript with Zod validation and Prisma types
+- **Component Architecture**: Reusable UI components with shadcn/ui and Radix primitives
+- **State Management**: Server state with TanStack Query, client state with Zustand
+- **Performance**: Next.js 15 with App Router, automatic code splitting, optimized builds
+- **Developer Experience**: Hot reload, ESLint config, clear folder structure
+- **Database**: Prisma ORM with migrations, type-safe queries, easy schema evolution
+- **Authentication**: NextAuth.js integration ready for multiple providers
+- **Internationalization**: Built-in i18n support with next-intl
+- **UI/UX**: Modern, accessible components with dark mode support
+
+## 💼 About This Project
+
+TeamFlow is a portfolio project showcasing full-stack development capabilities.  
+It demonstrates:
+
+- Ability to architect scalable SaaS applications from scratch
+- Deep knowledge of modern React/Next.js ecosystem
+- Experience with production-ready tooling and best practices
+- Understanding of type-safe development workflows
+- Clean code structure suitable for team collaboration
+
+This foundation can be extended to build real-world products like task managers, CRMs, admin panels, or any data-driven web application.
+
+## 📫 Contact
+
+Built by Valery Karlov  
+GitHub: [@SmartBulldog](https://github.com/SmartBulldog)
+
+---
+
+**License**: MIT
