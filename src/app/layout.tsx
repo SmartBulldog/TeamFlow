@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   creator: "Valerii Karpov",
   publisher: "VKV - New vision",
   metadataBase: new URL("https://teamflow.vkvstudio.pro"),
+    icons: {
+    icon: "/logo.svg",
+    apple: "/logo.svg",
+  },
   openGraph: {
     title: "TeamFlow - Modern Team Collaboration Platform",
     description: "Professional task management and team collaboration platform",
