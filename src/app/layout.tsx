@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TeamFlow - Modern Team Collaboration Platform",
     description: "Professional task management and team collaboration platform",
-  },
+  },className={`${g flex flex-col min-h-screengeistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}  className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen antialiased bg-background text-foreground`}
 };
 export default function RootLayout({
   children,
