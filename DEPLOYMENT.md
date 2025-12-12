@@ -11,6 +11,7 @@ Comprehensive deployment instructions for the TeamFlow collaborative workspace m
 5. [Production Deployment](#production-deployment)
 6. [Security Checklist](#security-checklist)
 7. [Troubleshooting](#troubleshooting)
+8. [Monitoring and Health Checks](#monitoring-and-health-checks)
 
 ## 🔧 Prerequisites
 
@@ -436,6 +437,236 @@ vercel logs
 
 # Production logs (Railway)
 railway logs
+```
+
+
+---
+
+## 📊 Monitoring and Health Checks
+
+### Health Check Endpoint
+
+TeamFlow includes a comprehensive health check endpoint for monitoring application status:
+
+**Endpoint:** `GET /api/health`
+
+**Response (Healthy):**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "uptime": 3600,
+  "environment": "production",
+  "version": "1.0.0",
+  "database": {
+    "status": "connected",
+    "responseTime": "12ms"
+  },
+  "memory": {
+    "used": 245,
+    "total": 512,
+    "unit": "MB"
+  },
+  "system": {
+    "platform": "linux",
+    "nodeVersion": "v20.10.0"
+  }
+}
+```
+
+**Response (Unhealthy):**
+```json
+{
+  "status": "unhealthy",
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "environment": "production",
+  "database": {
+    "status": "disconnected",
+    "error": "Connection timeout"
+  },
+  "memory": {
+    "used": 490,
+    "total": 512,
+    "unit": "MB"
+  }
+}
+```
+
+### Monitoring Setup
+
+#### 1. **Application Monitoring**
+
+```bash
+# Check application health
+curl https://your-domain.com/api/health
+
+# Monitor with interval
+watch -n 30 'curl -s https://your-domain.com/api/health | jq .'
+```
+
+#### 2. **Database Monitoring**
+
+Monitor PostgreSQL performance:
+
+```sql
+-- Check active connections
+SELECT count(*) FROM pg_stat_activity;
+
+-- Check database size
+SELECT pg_size_pretty(pg_database_size('teamflow'));
+
+-- Monitor slow queries
+SELECT query, mean_exec_time, calls 
+FROM pg_stat_statements 
+ORDER BY mean_exec_time DESC 
+LIMIT 10;
+```
+
+#### 3. **WebSocket Monitoring**
+
+Monitor WebSocket connections:
+
+```bash
+# Check WebSocket service
+netstat -an | grep :3001
+
+# Monitor connection count
+ss -tan | grep :3001 | wc -l
+```
+
+#### 4. **Log Monitoring**
+
+**Application Logs:**
+```bash
+# View real-time logs
+npm run logs
+
+# Search for errors
+grep -i error logs/app.log
+
+# Monitor specific patterns
+tail -f logs/app.log | grep "health check"
+```
+
+**Docker Logs:**
+```bash
+# View container logs
+docker compose logs -f app
+
+# View database logs
+docker compose logs -f db
+
+# View WebSocket service logs
+docker compose logs -f websocket
+```
+
+### Alerting Setup
+
+#### Uptime Monitoring Services
+
+**Recommended Services:**
+- **UptimeRobot** - Free tier available
+- **Pingdom** - Comprehensive monitoring
+- **StatusCake** - Global monitoring
+- **Better Uptime** - Modern monitoring platform
+
+**Setup Example (UptimeRobot):**
+
+1. Create HTTP(S) monitor
+2. URL: `https://your-domain.com/api/health`
+3. Check interval: 5 minutes
+4. Alert conditions:
+   - HTTP status != 200
+   - Response contains "unhealthy"
+5. Notification channels: Email, Slack, SMS
+
+#### Custom Alerting Script
+
+```bash
+#!/bin/bash
+# health-check-alert.sh
+
+HEALTH_URL="https://your-domain.com/api/health"
+WEBHOOK_URL="your-slack-webhook-url"
+
+response=$(curl -s $HEALTH_URL)
+status=$(echo $response | jq -r '.status')
+
+if [ "$status" != "healthy" ]; then
+    curl -X POST $WEBHOOK_URL \
+        -H 'Content-Type: application/json' \
+        -d '{"text":"🚨 TeamFlow Health Check Failed!","attachments":[{"text":"'"$response"'"}]}'
+fi
+```
+
+**Setup Cron Job:**
+```bash
+# Run health check every 5 minutes
+*/5 * * * * /path/to/health-check-alert.sh
+```
+
+### Performance Metrics
+
+#### Key Metrics to Monitor
+
+1. **Response Time**
+   - API endpoint response times
+   - Database query performance
+   - WebSocket message latency
+
+2. **Resource Usage**
+   - CPU utilization
+   - Memory consumption
+   - Disk I/O
+   - Network bandwidth
+
+3. **Application Metrics**
+   - Active users/connections
+   - Request rate
+   - Error rate
+   - Cache hit ratio
+
+4. **Database Metrics**
+   - Connection pool usage
+   - Query execution time
+   - Transaction rate
+   - Lock contention
+
+### Production Monitoring Tools
+
+#### Recommended Stack
+
+1. **Application Performance Monitoring (APM)**
+   - New Relic
+   - Datadog
+   - AppDynamics
+
+2. **Log Management**
+   - ELK Stack (Elasticsearch, Logstash, Kibana)
+   - Grafana Loki
+   - Papertrail
+
+3. **Infrastructure Monitoring**
+   - Prometheus + Grafana
+   - Netdata
+   - Zabbix
+
+4. **Error Tracking**
+   - Sentry
+   - Rollbar
+   - Bugsnag
+
+### Backup Monitoring
+
+```bash
+# Verify backup exists
+test -f /backups/teamflow-$(date +%Y%m%d).sql && echo "Backup OK" || echo "Backup Missing"
+
+# Check backup age
+find /backups -name "teamflow-*.sql" -mtime -1 | wc -l
+
+# Test backup restore (dry run)
+pg_restore --list backup.sql > /dev/null 2>&1 && echo "Backup Valid" || echo "Backup Corrupted"
 ```
 
 ## 📞 Support
